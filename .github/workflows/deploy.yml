@@ -14,14 +14,13 @@ jobs:
       uses: actions/checkout@v2
     
     - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.4.1
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
     
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@13.233.108.31 'bash -s' << EOF
+        ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.SSH_USERNAME }}@13.233.108.31 'bash -s' << EOF
         # Commands to execute on the EC2 instance
         echo "Hello from GitHub Actions!"
         EOF
-
